@@ -7,7 +7,7 @@
     "verbose": true,
     "watch": [
         "./views/pug/*",
-        "./server.js",
+        "./app.js",
         "./auth.js",
         "./routes.js",
         "./public/*"

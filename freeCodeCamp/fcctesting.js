@@ -53,9 +53,9 @@ module.exports = function (app) {
     next();
   });
 
-  app.route("/_api/server.js").get(function (req, res, next) {
+  app.route("/_api/app.js").get(function (req, res, next) {
     console.log("requested");
-    fs.readFile(process.cwd() + "/server.js", function (err, data) {
+    fs.readFile(process.cwd() + "/app.js", function (err, data) {
       if (err) return next(err);
       res.send(data.toString());
     });
