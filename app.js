@@ -30,24 +30,34 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-// Create (de)serializeUser functions
-passport.serializeUser((user, done) => {
-  done(null, user._id)
-})
+myDB(async client => {
+  const myDataBase = await client.db('passportChat').collection('users')
 
-passport.deserializeUser((id, done) => {
-  // myDB.findOne({ _id: new ObjectID(id) }, (err, doc) => {
-  //   done(null, null)
-  // })
-  done(null, null)
-})
-
-app.route('/').get((req, res) => {
-  res.render(`${process.cwd()}/views/pug`, {
-    title: 'Hello',
-    message: 'Please login'
+  app.route('/').get((req, res) => {
+    res.render(`${process.cwd()}/views/pug`, {
+      title: 'Connected to Database',
+      message: 'Please login'
+    });
   });
-});
+
+  // Create (de)serializeUser functions
+  passport.serializeUser((user, done) => {
+    done(null, user._id)
+  })
+
+  passport.deserializeUser((id, done) => {
+    myDB.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+      done(null, doc)
+    })
+  })
+}).catch(e => {
+  app.route('/').get((req, res) => {
+    res.render(`${process.cwd()}/views/pug`, {
+      title: e,
+      message: 'Unable to login'
+    })
+  })
+})
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
