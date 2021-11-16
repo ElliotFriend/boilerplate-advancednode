@@ -1,6 +1,7 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
-const GithubStrategy = require('passport-github2').Strategy
+const GitHubStrategy = require('passport-github2').Strategy
+const OldGithubStrategy = require('passport-github').Strategy
 const bcrypt = require('bcrypt')
 const ObjectID = require('mongodb').ObjectID
 
@@ -18,7 +19,7 @@ module.exports = function (app, myDataBase) {
   }))
 
   // set up the passport-github2 strategy
-  passport.use(new GithubStrategy({
+  passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
     callbackURL: 'https://boilerplate-advancednode.elliotfriend.repl.co/auth/github/callback'
