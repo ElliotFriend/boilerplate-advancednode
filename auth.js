@@ -26,7 +26,7 @@ module.exports = function (app, myDataBase) {
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
     callbackURL: `${cbURL}/auth/github/callback`
-  }, (accessToken, refreshToken, profile, done) => {
+  }, (accessToken, refreshToken, profile, cb) => {
     console.log(profile)
     myDataBase.findOneAndUpdate(
       { id: profile.id },
@@ -50,7 +50,7 @@ module.exports = function (app, myDataBase) {
       },
       { upsert: true, new: true },
       (err, doc) => {
-        return done(null, doc.value)
+        return cb(null, doc.value)
       }
     )
   }))
@@ -62,6 +62,7 @@ module.exports = function (app, myDataBase) {
 
   passport.deserializeUser((id, done) => {
     myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+      if (err) return console.error(err)
       done(null, doc)
     })
   })
