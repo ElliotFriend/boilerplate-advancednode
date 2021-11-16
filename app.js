@@ -43,7 +43,8 @@ myDB(async client => {
     res.render(`${process.cwd()}/views/pug`, {
       title: 'Connected to Database',
       message: 'Please login',
-      showLogin: true
+      showLogin: true,
+      showRegistration: true
     });
   });
 
@@ -78,6 +79,29 @@ myDB(async client => {
     res.redirect('/')
   })
 
+  app.route('/register').post((req, res, next) => {
+    myDataBase.findOne({ username: req.body.username }, (err, user) => {
+      if (err) {
+        next(err)
+      } else if (user) {
+        res.redirect('/')
+      } else {
+        myDataBase.insertOne({
+          username: req.body.username,
+          password: req.body.password
+        }, (err, doc) => {
+          if (err) {
+            res.redirect('/')
+          } else {
+            next(null, doc.ops[0])
+          }
+        })
+      }
+    })
+  }, passport.authenticate('local', { failureRedirect: '/' }), (req, res, next) => {
+    res.redirect('profile')
+  })
+
   app.use((req, res, next) => {
     res.status(404)
       .type('text')
@@ -90,7 +114,7 @@ myDB(async client => {
   })
 
   passport.deserializeUser((id, done) => {
-    myDB.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+    myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
       done(null, doc)
     })
   })
