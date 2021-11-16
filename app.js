@@ -31,6 +31,11 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
+// middleware to ensure a user is logged in
+const ensureAuthenticated = (req, res, next) => {
+  return req.isAuthenticated() ? next() : res.redirect('/')
+}
+
 myDB(async client => {
   const myDataBase = await client.db('passportChat').collection('users')
 
@@ -60,9 +65,11 @@ myDB(async client => {
     }
   )
 
-  app.route('/profile').get((req, res) => {
-    res.render(`${process.cwd()}/views/pug/profile.pug`)
-  })
+  app.route('/profile').get(
+    ensureAuthenticated, (req, res) => {
+      res.render(`${process.cwd()}/views/pug/profile`)
+    }
+  )
 
   // Create (de)serializeUser functions
   passport.serializeUser((user, done) => {
