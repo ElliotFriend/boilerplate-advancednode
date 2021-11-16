@@ -1,5 +1,6 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
+const GitHubStrategy = require('passport-github2')
 const bcrypt = require('bcrypt')
 const ObjectID = require('mongodb').ObjectID
 
