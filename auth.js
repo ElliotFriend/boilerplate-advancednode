@@ -1,6 +1,6 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
-const GitHubStrategy = require('passport-github2')
+const GithubStrategy = require('passport-github2').Strategy
 const bcrypt = require('bcrypt')
 const ObjectID = require('mongodb').ObjectID
 
@@ -15,6 +15,15 @@ module.exports = function (app, myDataBase) {
         !bcrypt.compareSync(password, user.password) ? done(null, false) :
         done(null, user)
     })
+  }))
+
+  // set up the passport-github2 strategy
+  passport.use(new GithubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: 'https://boilerplate-advancednode.elliotfriend.repl.co/auth/github/callback'
+  }, (accessToken, refreshToken, profile, done) => {
+    console.log(profile)
   }))
 
   // Create (de)serializeUser functions
