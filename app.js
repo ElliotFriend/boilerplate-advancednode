@@ -6,7 +6,6 @@ const routes = require('./routes')
 const auth = require('./auth')
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 
-
 // session and passport declarations
 const session = require('express-session')
 const passport = require('passport')
@@ -30,11 +29,18 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
+
 myDB(async client => {
   const myDataBase = await client.db('passportChat').collection('users')
 
   routes(app, myDataBase)
   auth(app, myDataBase)
+
+  io.on('connection', socket => {
+    console.log('A user has connected')
+  })
 
 }).catch(e => {
   app.route('/').get((req, res) => {
@@ -46,6 +52,6 @@ myDB(async client => {
 })
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+http.listen(PORT, () => {
   console.log('Listening on port ' + PORT);
 });

@@ -27,7 +27,7 @@ module.exports = function (app, myDataBase) {
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
     callbackURL: `${cbURL}/auth/github/callback`
   }, (accessToken, refreshToken, profile, cb) => {
-    console.log(profile)
+    // console.log(profile)
     myDataBase.findOneAndUpdate(
       { id: profile.id },
       {
